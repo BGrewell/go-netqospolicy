@@ -1,5 +1,0 @@
-package netqospolicy
-
-func main() {
-	
-}
