@@ -321,6 +321,11 @@ func Remove(name string) (err error) {
 	return policy.Remove()
 }
 
+func RemoveAll() (err error) {
+	err = executeCommand(fmt.Sprintf("%s %s", delCommandlet, "-Confirm:$False"))
+	return err
+}
+
 func executeGetAllPolicies(temp bool) (stdout string, stderr string, err error) {
 	cmd := []string{
 		cmdShell,
