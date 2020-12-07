@@ -279,8 +279,9 @@ func GetAll() (policies []*NetQoSPolicy, err error) { //todo: There is a lot of 
 
 func Get(name string) (policy *NetQoSPolicy, err error) {
 	var policyStore string
+	noPolicyFoundError := "No MSFT_NetQosPolicySettingData objects found"
 	stdout, stderr, err := executeGetPolicy(name, false)
-	if err != nil && strings.Contains(stderr, "No MSFT_NetQosPolicySettingData objects found") {
+	if err != nil && strings.Contains(stderr, noPolicyFoundError) {
 		// try looking for temporary profiles
 		stdout, stderr, err = executeGetPolicy(name, true)
 		policyStore = "ActiveStore"
@@ -288,6 +289,8 @@ func Get(name string) (policy *NetQoSPolicy, err error) {
 
 	if err != nil && strings.Contains(stderr, "Access is denied") {
 		return nil, fmt.Errorf("access denied. try running as administrator: %v", err)
+	} else if err != nil && strings.Contains(stderr, noPolicyFoundError) {
+		return nil, fmt.Errorf("no policy with that name found")
 	} else if err != nil && !strings.Contains(stderr, falseError) {
 		return nil, err
 	}
